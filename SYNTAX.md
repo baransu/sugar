@@ -62,3 +62,14 @@ foo 0 -> 1
 foo _ -> 1
 foo x -> x #this definition is unreachable
 ```
+
+## Comments
+#### Asumptions
+* Comment is defined by `#` character
+* Everything from `#` to end of the line is omitted by compiler
+
+#### Example
+```sugar
+# this is comment
+foo : Char, Char -> String # this is also comment
+```
