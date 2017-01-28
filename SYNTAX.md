@@ -13,7 +13,7 @@ Basic members (primitives):
 ## Functions 
 #### Assumptions
 * Compiler should be able to identify function definition by:
- * arrity
+ * arity
  * type declaration
  * pattern matching
 * Used function is identified in above order
@@ -23,7 +23,7 @@ Basic members (primitives):
 * Type declarations should be known before definition.
 * While declarations can be written gruped by at once in terms of validation, it should be warned to group declarations with coresponding definitions
 * Each function definition should be reachable, if any is unreachable it should be warned and removed
-* Identifing function by pattern match should happend from top to bottom in given arrity and type declaration
+* Identifing function by pattern match should happend from top to bottom in given arity and type declaration
 
 #### Function declarations
 ```sugar
