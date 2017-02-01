@@ -5,20 +5,38 @@ defmodule SugarTest.Parser do
   alias Sugar.Parser
 
   @tokens [
-    {:lparen, "("},
-    {:function, "add"},
-    {:number, "2"},
-    {:lparen, "("},
-    {:function, "multiply"},
-    {:number, "10"},
-    {:number, "4"},
-    {:rparen, ")"},
-    {:number, "2.2"},
-    {:rparen, ")"},
-    {:lparen, "("},
-    {:function, "something"},
-    {:rparen, ")"}
-  ]
+    {:indent, 0},
+    {:name, "add"},
+    {:l_paren, "("},
+    {:type, "Int"},
+    {:coma, ","},
+    {:type, "Int"},
+    {:r_paren, ")"},
+  {:r_arrow, "->"},
+  {:type, "Int"},
+    {:indent, 0},
+  {:name, "add"},
+  {:l_paren, "("},
+  {:name, "x"},
+  {:coma, ","},
+  {:name, "y"},
+  {:r_paren, ")"},
+{:r_arrow, "->"},
+    {:name, "x"},
+  {:operator, "+"},
+    {:name, "y"},
+    {:indent, 0},
+    {:name, "add"},
+    {:l_paren, "("},
+    {:name, "x"},
+    {:coma, ","},
+    {:number, "1"},
+    {:r_paren, ")"},
+  {:r_arrow, "->"},
+  {:name, "x"},
+    {:operator, "*"},
+  {:name, "x"}
+  ] 
 
   @ast {:program, [
            {:call_expression, "add", [

@@ -19,12 +19,16 @@ defmodule Sugar.Tokenizer do
   def tokenize("", acc), do: acc
   def tokenize(string, acc) do
     {tokens, str} =
-      [ {~r/^([a-z])+/i, :function},
+      [ {~r/^[a-z]+(_[a-z]+)*/, :name},
         {~r/^([0-9]\.?[0-9]*)/, :number},
         {~r/^".*?"/, :string},
-        {~r/^\(/, :lparen},
-        {~r/^\)/, :rparen},
-        {~r/^#.*/, :comment}
+        {~r/^\(/, :l_paren},
+        {~r/^\)/, :r_paren},
+        {~r/^\,/, :coma},
+      {~r/^->/, :r_arrow},
+        {~r/^(\*|\/|\+|-)/, :operator},
+        {~r/^[A-Z][a-z]+(?:[A-Z][a-z]+)*/, :type},
+        {~r/^#.*/, :comment},
       ]
       |> Enum.reduce({[], string}, &process_regex/2)
     cond do
@@ -33,9 +37,24 @@ defmodule Sugar.Tokenizer do
     end
   end
 
+  def get_indent(line) do
+    case Regex.run(~r/^\s*/, line, return: :index) do
+      [{s, e} | _] ->
+        case String.split_at(line, e) do
+          {_, tail} -> {e, tail}
+          _ -> {e, line}
+        end
+      _ -> {0, line}
+    end
+  end
+
   def tokenizer(content) do
     content
     |> String.split("\n")
-    |> Enum.reduce([], &tokenize/2)
+    |> Enum.filter(fn x -> String.length(x) > 0 end)
+    |> Enum.map(&get_indent/1)
+    |> Enum.reduce([], fn({indent, line}, acc) ->
+      tokenize(line, acc ++ [{:indent, indent}])
+    end)
   end
 end

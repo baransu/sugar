@@ -5,19 +5,43 @@ defmodule SugarTest.Tokenizer do
   alias Sugar.Tokenizer
 
   @entry """
-  ( add 2 2.2 ) FUNCTION #asdasd
-  "asdasd"
+  add(Int, Int) -> Int
+  add(x, y) -> x + y
+  add(x, 1) -> x * x
   """
 
   @tokens [
-    {:lparen, "("},
-    {:function, "add"},
-    {:number, "2"},
-    {:number, "2.2"},
-    {:rparen, ")"},
-    {:function, "FUNCTION"},
-    {:comment, "#asdasd"},
-    {:string, "\"asdasd\""}
+    {:indent, 0},
+    {:name, "add"},
+    {:l_paren, "("},
+    {:type, "Int"},
+    {:coma, ","},
+    {:type, "Int"},
+    {:r_paren, ")"},
+  {:r_arrow, "->"},
+  {:type, "Int"},
+    {:indent, 0},
+  {:name, "add"},
+  {:l_paren, "("},
+  {:name, "x"},
+  {:coma, ","},
+  {:name, "y"},
+  {:r_paren, ")"},
+{:r_arrow, "->"},
+    {:name, "x"},
+  {:operator, "+"},
+    {:name, "y"},
+    {:indent, 0},
+    {:name, "add"},
+    {:l_paren, "("},
+    {:name, "x"},
+    {:coma, ","},
+    {:number, "1"},
+    {:r_paren, ")"},
+  {:r_arrow, "->"},
+  {:name, "x"},
+    {:operator, "*"},
+  {:name, "x"}
   ]
 
   test "should create tokens" do

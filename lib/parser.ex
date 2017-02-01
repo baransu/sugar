@@ -1,30 +1,56 @@
 defmodule Sugar.Parser do
 
-  def walk([], acc), do: {[], acc}
-  def walk([{:lparen, _} | tail], acc) do
-    [{_, value} | t] = tail
-    {tokens, params} = walk(t, [])
-    walk(tokens, acc ++ [{:call_expression, value, params}])
+  def walk([], i, acc), do: {[], acc}
+  def walk([{:r_paren, _} | tail], i, acc), do: acc
+
+  def walk([{:number, value} | tail], i, acc) do
+    walk(tail, i, acc ++ [{:number_literal, value}])
   end
 
-  def walk([{:number, value} | tail], acc) do
-    walk(tail, acc ++ [{:number_literal, value}])
+  def walk([{:type, value} | tail], i, acc) do
+    walk(tail, i, acc ++ [{:type_literal, value}])
   end
 
-  def walk([{:string, value} | tail], acc) do
-    walk(tail, acc ++ [{:string_literal, value}])
+  def walk([{:string, value} | tail], i, acc) do
+    walk(tail, i, acc ++ [{:string_literal, value}])
   end
 
-  def walk([head | tail], acc) do
-    case head do
-      {:rparen, _} -> {tail, acc}
-      {:function, value} -> IO.puts(:stderr, "Unexpected function: " <> value)
-      _ -> walk(tail, acc)
-    end
+  def walk([{:name, value} | tail], indent, acc) do
+    [h | t] = tail
+    args =
+      case h do
+        {:l_paren, _} -> walk(t, indent, [])
+        _ -> []
+      end
+
+    [next | tokens]  = t
+    func =
+      case next do
+        {:r_arrow, _} ->
+          {toks, body} = walk(tokens, indent, [])
+          walk(
+            toks,
+            indent,
+            acc ++ [{:function_expression, value, body}])
+        _ ->
+          walk(t, indent, acc ++ [{:call_expression, value, args}])
+      end
+  end
+
+  def walk([head | tail], indent, acc) do
+    walk(tail, indent, acc)
+  end
+
+  def walk([{:indent, i} | tail], indent, acc) when i < indent do
+    {tail, acc}
+  end
+
+  def walk([{:indent, indent} | tail], _i, acc) do
+    walk(tail, indent, acc)
   end
 
   def parser(tokens) do
-    {tail, body} = walk(tokens, [])
+    {tail, body} = walk(tokens, 0, [])
     {:program, body}
   end
 

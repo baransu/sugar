@@ -25,6 +25,7 @@
 * While declarations can be written gruped by at once in terms of validation, it should be warned to group declarations with coresponding definitions
 * Each function definition should be reachable, if any is unreachable it should be warned and removed
 * Identifing function by pattern match should happend from top to bottom in given arity and type declaration
+* Functions should be written in `snake_case`
 
 #### Function declarations
 ```sugar
@@ -107,3 +108,4 @@ x = add(1,2) # also an destructuring
 # this is comment
 foo(String, String) -> String # this is also comment
 ```
+
