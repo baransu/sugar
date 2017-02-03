@@ -36,18 +36,31 @@ defmodule SugarTest.Parser do
   {:name, "x"},
     {:operator, "*"},
   {:name, "x"}
-  ] 
+  ]
 
   @ast {:program, [
-           {:call_expression, "add", [
-               {:number_literal, "2"},
-               {:call_expression, "multiply", [
-                   {:number_literal, "10"},
-                   {:number_literal, "4"}
-                 ]},
-               {:number_literal, "2.2"}
+           {:function_definition, "add", [
+               {:type_literal, "Int"},
+               {:type_literal, "Int"}
+             ], [
+               {:type_literal, "Int"}
              ]},
-           {:call_expression, "something", []}
+           {:function_definition, "add", [
+               {:name, "x"},
+               {:name, "y"}
+             ], [
+               {:variable, "x"},
+               {:operator, "+"},
+               {:variable, "y"},
+             ]},
+           {:function_definition, "add", [
+               {:variable, "Int"},
+               {:number_literal, "1"}
+             ], [
+               {:variable, "x"},
+               {:operator, "+"},
+               {:variable, "x"},
+             ]},
          ]}
 
   test "should create correct AST" do

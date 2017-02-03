@@ -1,7 +1,7 @@
 defmodule Sugar.Parser do
 
   def walk([], i, acc), do: {[], acc}
-  def walk([{:r_paren, _} | tail], i, acc), do: acc
+  def walk([{:r_paren, _} | tail], i, acc), do: {tail, acc}
 
   def walk([{:number, value} | tail], i, acc) do
     walk(tail, i, acc ++ [{:number_literal, value}])
@@ -16,25 +16,23 @@ defmodule Sugar.Parser do
   end
 
   def walk([{:name, value} | tail], indent, acc) do
-    [h | t] = tail
-    args =
-      case h do
-        {:l_paren, _} -> walk(t, indent, [])
-        _ -> []
+    {tokens, args} =
+      case tail do
+        # if anything else
+        [{:l_paren, _} | t] -> walk(t, indent, [])
+        _ -> {tail, []} #should throw error
       end
 
-    [next | tokens]  = t
-    func =
-      case next do
-        {:r_arrow, _} ->
-          {toks, body} = walk(tokens, indent, [])
-          walk(
-            toks,
-            indent,
-            acc ++ [{:function_expression, value, body}])
-        _ ->
-          walk(t, indent, acc ++ [{:call_expression, value, args}])
-      end
+    case tokens do
+      [{:r_arrow, _} | tl] ->
+        {toks, body} = walk(tl, indent, [])
+        walk(
+          toks,
+          indent,
+          acc ++ [{:function_definition, value, args, body}])
+      _ ->
+        walk(tokens, indent, acc ++ [{:call_expression, value, args}])
+    end
   end
 
   def walk([head | tail], indent, acc) do
