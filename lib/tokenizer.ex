@@ -26,7 +26,7 @@ defmodule Sugar.Tokenizer do
         {~r/^\)/, :r_paren},
         {~r/^\,/, :coma},
       {~r/^->/, :r_arrow},
-        {~r/^(\*|\/|\+|-)/, :operator},
+      {~r/^(\*|\/|\+|-|=)/, :operator},
         {~r/^[A-Z][a-z]+(?:[A-Z][a-z]+)*/, :type},
         {~r/^#.*/, :comment},
       ]
@@ -48,6 +48,9 @@ defmodule Sugar.Tokenizer do
     end
   end
 
+  @doc """
+  Lexical analysis
+  """
   def tokenizer(content) do
     content
     |> String.split("\n")

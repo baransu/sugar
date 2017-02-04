@@ -7,7 +7,8 @@ defmodule SugarTest.Tokenizer do
   @entry """
   add(Int, Int) -> Int
   add(x, y) -> x + y
-  add(x, 1) -> x * x
+  add(x, 1) ->
+    y = x * x
   """
 
   @tokens [
@@ -39,8 +40,11 @@ defmodule SugarTest.Tokenizer do
     {:number, "1"},
     {:r_paren, ")"},
   {:r_arrow, "->"},
+  {:indent, 2},
+  {:name, "y"},
+    {:operator, "="},
   {:name, "x"},
-    {:operator, "*"},
+  {:operator, "*"},
   {:name, "x"}
   ]
 

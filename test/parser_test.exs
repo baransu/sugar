@@ -33,9 +33,11 @@ defmodule SugarTest.Parser do
     {:number, "1"},
     {:r_paren, ")"},
   {:r_arrow, "->"},
-  {:name, "x"},
-    {:operator, "*"},
-  {:name, "x"}
+  {:name, "y"},
+    {:operator, "="},
+  {:number, "1"},
+  {:operator, "+"},
+  {:number, "1"}
   ]
 
   @ast {:program, [
@@ -57,11 +59,15 @@ defmodule SugarTest.Parser do
                {:function_call, "x", []},
                {:number_literal, "1"}
              ], [
-               {:function_call, "x", []},
-               {:operator, "*"},
-               {:function_call, "x", []},
+               {:function_call, "y", []},
+               {:assignment, [
+                   {:number_literal, "1"},
+                   {:operator, "+"},
+                   {:number_literal, "1"},
+                 ]},
              ]},
          ]}
+
 
   test "should create correct AST" do
     assert Parser.parser(@tokens) == @ast

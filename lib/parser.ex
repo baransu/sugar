@@ -11,15 +11,19 @@ defmodule Sugar.Parser do
   def walk([{:string, value} | tail], i, acc),
     do: walk(tail, i, acc ++ [{:string_literal, value}])
 
-  def walk([{:operator, value} | tail], i, acc) do
-    # TODO generate binary expression
-    walk(tail, i, acc ++ [{:operator, value}])
-  end
-
   def walk([{:indent, indent} | tail], i, acc) do
     cond do
-      indent >= i -> {tail, acc}
+      indent <= i -> {tail, acc}
       true -> walk(tail, indent, acc)
+    end
+  end
+
+  def walk([{:operator, value} | tail], i , acc) do
+    case value do
+      "=" ->
+        {toks, body} = walk(tail, i, [])
+        walk(toks, i, acc ++ [{:assignment, body}])
+      _ -> walk(tail, i, acc ++ [{:operator, value}])
     end
   end
 
