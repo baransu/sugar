@@ -2,25 +2,32 @@ defmodule Sugar.Parser do
 
   def walk([], i, acc), do: {[], acc}
   def walk([{:r_paren, _} | tail], i, acc), do: {tail, acc}
+  def walk([{:number, value} | tail], i, acc),
+    do: walk(tail, i, acc ++ [{:number_literal, value}])
 
-  def walk([{:number, value} | tail], i, acc) do
-    walk(tail, i, acc ++ [{:number_literal, value}])
+  def walk([{:type, value} | tail], i, acc),
+    do: walk(tail, i, acc ++ [{:type_literal, value}])
+
+  def walk([{:string, value} | tail], i, acc),
+    do: walk(tail, i, acc ++ [{:string_literal, value}])
+
+  def walk([{:operator, value} | tail], i, acc) do
+    # TODO generate binary expression
+    walk(tail, i, acc ++ [{:operator, value}])
   end
 
-  def walk([{:type, value} | tail], i, acc) do
-    walk(tail, i, acc ++ [{:type_literal, value}])
-  end
-
-  def walk([{:string, value} | tail], i, acc) do
-    walk(tail, i, acc ++ [{:string_literal, value}])
+  def walk([{:indent, indent} | tail], i, acc) do
+    cond do
+      indent >= i -> {tail, acc}
+      true -> walk(tail, indent, acc)
+    end
   end
 
   def walk([{:name, value} | tail], indent, acc) do
     {tokens, args} =
       case tail do
-        # if anything else
         [{:l_paren, _} | t] -> walk(t, indent, [])
-        _ -> {tail, []} #should throw error
+        _ -> {tail, []}
       end
 
     case tokens do
@@ -29,9 +36,9 @@ defmodule Sugar.Parser do
         walk(
           toks,
           indent,
-          acc ++ [{:function_definition, value, args, body}])
+          acc ++ [{:function_def, value, args, body}])
       _ ->
-        walk(tokens, indent, acc ++ [{:call_expression, value, args}])
+        walk(tokens, indent, acc ++ [{:function_call, value, args}])
     end
   end
 
@@ -39,17 +46,14 @@ defmodule Sugar.Parser do
     walk(tail, indent, acc)
   end
 
-  def walk([{:indent, i} | tail], indent, acc) when i < indent do
-    {tail, acc}
-  end
-
-  def walk([{:indent, indent} | tail], _i, acc) do
-    walk(tail, indent, acc)
+  def parse([]), do: []
+  def parse(tokens) do
+    {tail, acc} = walk(tokens, 0, [])
+    acc ++ parse(tail)
   end
 
   def parser(tokens) do
-    {tail, body} = walk(tokens, 0, [])
-    {:program, body}
+    {:program, parse(tokens)}
   end
 
 end

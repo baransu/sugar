@@ -39,27 +39,27 @@ defmodule SugarTest.Parser do
   ]
 
   @ast {:program, [
-           {:function_definition, "add", [
+           {:function_def, "add", [
                {:type_literal, "Int"},
                {:type_literal, "Int"}
              ], [
                {:type_literal, "Int"}
              ]},
-           {:function_definition, "add", [
-               {:name, "x"},
-               {:name, "y"}
+           {:function_def, "add", [
+               {:function_call, "x", []},
+               {:function_call, "y", []}
              ], [
-               {:variable, "x"},
+               {:function_call, "x", []},
                {:operator, "+"},
-               {:variable, "y"},
+               {:function_call, "y", []},
              ]},
-           {:function_definition, "add", [
-               {:variable, "Int"},
+           {:function_def, "add", [
+               {:function_call, "x", []},
                {:number_literal, "1"}
              ], [
-               {:variable, "x"},
-               {:operator, "+"},
-               {:variable, "x"},
+               {:function_call, "x", []},
+               {:operator, "*"},
+               {:function_call, "x", []},
              ]},
          ]}
 

@@ -1,46 +1,29 @@
-# Possible syntax
-
-## Primitves
-
-#### Basic primitves
-* `Int`, `42` - integer value
-* `Float`, `3.14` - floating point value
-* `String`, `"bar"` - char array
-* `Char`, `'c'` - single character (subject to change)
-* `{Type, Type, ... , Type}`, `{1, 3.14}` - tuple
-* `[Type]`, `[1,2,3,4,5]` - list
-* `Atom`, `:atom` - unique value
+# Basic design
 
 ## Functions 
 #### Assumptions
 * Compiler should be able to identify function definition by:
- * arity
  * type declaration
  * pattern matching
-* Used function is identified in above order
-* Every function is an expression
+* Used function are identified in above order
+* Every function have to return value
 * Each function should be validated on compile time to prevent run-time errors
 * Function definitions should be unique, every duplication should be warned and removed
 * Type declarations should be known before definition.
-* While declarations can be written gruped by at once in terms of validation, it should be warned to group declarations with coresponding definitions
-* Each function definition should be reachable, if any is unreachable it should be warned and removed
-* Identifing function by pattern match should happend from top to bottom in given arity and type declaration
+* Each function should be reachable, if any is unreachable it should be warned and removed
+* Identifing function by pattern match should happend from top to bottom
 * Functions should be written in `snake_case`
 
 #### Function declarations
 ```sugar
 foo(Int, Int) -> Int
-foo(Int) -> Int
-foo(Int) -> Float
+foo() -> Int
 ```
 
 #### Function definitions
 ```sugar
-foo(0, 0) -> 1
+foo(0, 1) -> 1
 foo(x, y) -> x + y
-
-foo(x) -> x * 3.14
-foo(0) -> 1
 ```
 
 #### Correct declaration/definition gruping
@@ -48,21 +31,14 @@ foo(0) -> 1
 foo(Int, Int) -> Int
 foo(0, 0) -> 1
 foo(x, y) -> x + y
-
-foo(Int) -> Int
-foo(0) -> 1
-foo(x) -> x + x
-
-foo(Int) -> Float
-foo(x) -> x * 3.14
 ```
 
 #### Unreachable definition
 ```sugar
-foo(Int) -> Int
-foo(0) -> 1
-foo(_) -> 1
-foo(x) -> x #this definition is unreachable
+foo(Int, Int) -> Int
+foo(0, 1) -> 1
+foo(x, y) -> 1
+foo(x, _) -> x #this definition is unreachable
 ```
 
 ## Pattern matching and destructuring
@@ -75,9 +51,9 @@ foo(x) -> x #this definition is unreachable
 * Any variable can be destructured
 * All variables are created by destructuring
 * List can be destructured by as many elements as you want. Last element will always be new `List` of all left elements or empty list.
-* Any match that can possibly fail will be matched to Maybe monad.
+* Any match that can possibly fail will be matched to `Maybe` monad.
 
-#### Function matching matching
+#### Function pattern matching
 
 #### `case of` matching
 
@@ -109,3 +85,16 @@ x = add(1,2) # also an destructuring
 foo(String, String) -> String # this is also comment
 ```
 
+## Types
+
+#### Basic primitves
+* `Int`, `42` - integer value
+* `Float`, `3.14` - floating point value
+* `String`, `"bar"` - char array
+* `Bool`, `true/false` - boolean type
+* `Char`, `'c'` - single character (subject to change)
+* `{Type, Type, ... , Type}`, `{1, 3.14}` - tuple
+* `[Type]`, `[1,2,3,4,5]` - list of given type
+* `Atom`, `:value` - unique value 
+
+## Modules
