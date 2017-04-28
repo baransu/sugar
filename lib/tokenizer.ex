@@ -27,7 +27,6 @@ defmodule Sugar.Tokenizer do
         {~r/^\,/, :coma},
       {~r/^->/, :r_arrow},
       {~r/^(\*|\/|\+|-|=)/, :operator},
-        {~r/^[A-Z][a-z]+(?:[A-Z][a-z]+)*/, :type},
         {~r/^#.*/, :comment},
       ]
       |> Enum.reduce({[], string}, &process_regex/2)

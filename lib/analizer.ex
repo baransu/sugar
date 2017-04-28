@@ -2,7 +2,6 @@ defmodule Sugar.Analizer do
 
   alias Sugar.Store
 
-
   def is_signature({_, _, args, body}) do
     correct_args? = Enum.reduce(args, true, fn(a, acc) ->
       type? =
